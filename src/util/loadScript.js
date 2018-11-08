@@ -1,16 +1,17 @@
 /**
- * Load a JavaScript file.
  *
- * @param {String} url Script file url. A string array of url's also possible.
- * @param {Object} [opt] Callback function when file loaded.
- * @retun {Promise}
+ * @param {string} url
+ * @param {Function<boolean>} validationFunction
+ * @return {Promise<any>}
  */
-export default function loadScript(url, opts = {}) {
+import asyncValidator from './asyncValidator';
+
+function _loadScript(url) {
   return new Promise((resolve, reject) => {
     const head = document.head || document.querySelector('head');
     const script = document.createElement('script');
-    script.type = opts.type || 'text/javascript';
-    script.charset = opts.charset || 'utf8';
+    script.type = 'text/javascript';
+    script.charset = 'utf8';
     script.async = true;
     script.onload = function() {
       this.onerror = this.onload = null;
@@ -26,4 +27,13 @@ export default function loadScript(url, opts = {}) {
 
     head.appendChild(script);
   });
+}
+
+export default function loadScript(url, validationFunction = null) {
+  let prom = _loadScript(url);
+  if (validationFunction) {
+    prom = prom.then(() => asyncValidator(validationFunction));
+  }
+
+  return prom;
 }

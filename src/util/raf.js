@@ -1,43 +1,49 @@
-export default function raf(callback, limitFps = -1) {
-  let rafNum = -1;
+const store = [];
+const offsetPosition = Date.now();
+
+/**
+ * Like setInterval but now with requestAnimationFrame.
+ * @param callback
+ * @param limitFps
+ * @return {number}
+ */
+export function setRaf(callback, limitFps = -1) {
+  const rafPosition = store.length;
+  store.push(-1);
+
   let totalTime = 0;
   const hasLimiter = limitFps > 0;
   const limitMsps = 1000 / limitFps;
   let timeAcc = limitMsps;
 
   const tick = timestamp => {
-    rafNum = window.requestAnimationFrame(tick);
-    if (!hasLimiter) {
-      callback.call();
-    } else if (!totalTime) {
+    store[rafPosition] = window.requestAnimationFrame(tick);
+
+    if (!totalTime) {
       totalTime = timestamp;
+    } else if (!hasLimiter) {
+      callback.call(null, timestamp, timestamp - totalTime);
     } else {
       timeAcc += timestamp - totalTime;
-      totalTime = timestamp;
       while (timeAcc > limitMsps) {
         timeAcc -= limitMsps;
-        callback.call();
+        callback.call(null, timestamp - timeAcc, limitMsps);
       }
     }
+
+    totalTime = timestamp;
   };
 
-  // totalTime = new Date().getTime();
-  rafNum = window.requestAnimationFrame(tick);
+  store[rafPosition] = window.requestAnimationFrame(tick);
 
-  return {
-    valueOf: () => rafNum,
-    start: () => {
-      if (rafNum === -1) {
-        tick();
-      }
-    },
-    stop: () => {
-      cancelAnimationFrame(rafNum);
-      rafNum = -1;
-    },
-    destruct: () => {
-      cancelAnimationFrame(rafNum);
-      rafNum = null;
-    },
-  };
+  return rafPosition + offsetPosition;
+}
+
+export function cancelRaf(value) {
+  const position = value - offsetPosition;
+  if (store[position]) {
+    cancelAnimationFrame(store[position]);
+    return true;
+  }
+  return false;
 }

@@ -1,9 +1,10 @@
 export default function getStyleRuleValue(style, selector, sheet) {
   const sheets = [];
-  for (var k in document.styleSheets) {
+  for (let k in document.styleSheets) {
     if (
       document.styleSheets[k].href &&
-      (document.styleSheets[k].href.indexOf('style.css') != -1 || document.styleSheets[k].href.indexOf(sheet) != -1)
+      (document.styleSheets[k].href.indexOf('style.css') != -1 ||
+        document.styleSheets[k].href.indexOf(sheet) != -1)
     ) {
       sheets.push(document.styleSheets[k]);
     }

@@ -1,21 +1,16 @@
-import Core from '../../Core';
-
 export default class Sizmek extends Core {
   constructor() {
     super();
-    this.defaultExitURL = '';
-    this.exitURLs = [''];
-
-    temple.color = '#0068ff';
-    temple.type = 'Sizmek';
-    temple.utils.tracker = this._tracker;
 
     this._platform = {
       _closeOverlay: function() {},
     };
 
     if (!window['EBG']) {
-      temple.utils.loadScript('//secure-ds.serving-sys.com/BurstingScript/EBLoader.js', this._initCore.bind(this));
+      temple.utils.loadScript(
+        '//secure-ds.serving-sys.com/BurstingScript/EBLoader.js',
+        this._initCore.bind(this),
+      );
     } else {
       this._initCore();
     }
@@ -51,7 +46,10 @@ export default class Sizmek extends Core {
       this._trackedEvents.push(title);
     }
     // dhtml.sendEvent(this._trackedEvents.indexOf(title) + 1, title);
-    temple.utils.debug('Tracked Event: ' + (this._trackedEvents.indexOf(title) + 1) + ' - ' + title, 'green');
+    temple.utils.debug(
+      'Tracked Event: ' + (this._trackedEvents.indexOf(title) + 1) + ' - ' + title,
+      'green',
+    );
   }
 }
 

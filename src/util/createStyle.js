@@ -7,7 +7,7 @@ import getGlobalStyleSheet from './getGlobalStyleSheet';
  * @param {String} rule CSS rules.
  */
 export default function createStyle(classSelector, rules) {
-  classSelector = classSelector != 'banner' ? '#banner ' + classSelector : classSelector;
+  classSelector = classSelector !== 'banner' ? '#banner ' + classSelector : classSelector;
 
   var styleSheet = getGlobalStyleSheet();
 
